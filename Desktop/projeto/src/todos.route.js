@@ -25,14 +25,16 @@ todosRoutes.get("/todos", async(request, response) =>{
     return response.status(201).json(todos);
 });
 //Update
-todosRoutes.put("/todos", async(request, response) =>{
-    const {name, id, status} = request.body;
+todosRoutes.put("/todos/:id", async(request, response) =>{
+    const {id} = request.params;
+    const intId = parseInt(id);
+    const {name, status} = request.body;
 
-    if(!id){
+    if(!intId){
         return response.status(400).json("Id is mandatory");
     }
 
-    const todoAlreadyExist = await prisma.todo.findUnique({where:{ id }});
+    const todoAlreadyExist = await prisma.todo.findUnique({where:{ id:intId }});
 
     if(!todoAlreadyExist){
         return response.status(404).json("Todo not exist");
@@ -40,7 +42,7 @@ todosRoutes.put("/todos", async(request, response) =>{
 
     const  todo = await prisma.todo.update({
         where: {
-            id,
+            id:intId,
 
     },
     data:{
