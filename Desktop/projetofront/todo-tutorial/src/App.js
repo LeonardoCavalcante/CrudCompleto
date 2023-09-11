@@ -35,6 +35,7 @@ function App() {
   async function handleWithEditbutton(todo){
     setSelectTodo(todo);
     setInputVisility(true);
+    setInputValue(todo.name);
   }
   async function getTodos(){
     const response = await axios.get("http://localhost:3333/todos");
@@ -52,13 +53,15 @@ function App() {
   }
 
   async function deleteTodo(todo){
+    const confirmdelete = window.confirm("Tem certeza que deseja deletar essa tarefa?");
+    if(confirmdelete){
     await axios.delete(`http://localhost:3333/todos/${todo.id}`);
     getTodos();
+    } 
   }
 
   async function editTodo(){
-    const response = await axios.put("http://localhost:3333/todos", {
-    id: selectedTodo.id,
+    const response = await axios.put(`http://localhost:3333/todos/${selectedTodo.id}`, {
     name: inputValue,
     });
     setSelectTodo();
@@ -78,7 +81,7 @@ function App() {
   }
 
   const [todos, setTodos] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState("Oi");
   const [inputVisbility, setInputVisility] = useState(false);
   const [selectedTodo, setSelectTodo] = useState();
   useEffect(() =>{
@@ -94,9 +97,11 @@ function App() {
        <input value = {inputValue} 
        style={{display: inputVisbility ? "block" : "none"}}
        onChange={(event) =>{
+        console.log(event.target.value);
           setInputValue(event.target.value);
        }} 
        className='inputName'></input>
+       
        <button  onClick = {inputVisbility ? selectedTodo ? editTodo : createTodo : handlewithNewButton} className='newTaskButton'>{inputVisbility ? "Confirmar" : "+ Nova atividade"}</button>
       </header>
       
